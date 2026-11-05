@@ -1,6 +1,8 @@
 package com.inventory.inventory_management.service;
 
 import com.inventory.inventory_management.entity.Product;
+import com.inventory.inventory_management.exception.DuplicateSkuException;
+import com.inventory.inventory_management.exception.ProductNotFoundException;
 import com.inventory.inventory_management.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +21,7 @@ public class ProductService {
     public Product addProduct(Product product) {
 
         if (productRepository.existsBySku(product.getSku())) {
-            throw new IllegalArgumentException(
-                    "Product with this SKU already exists"
+            throw new DuplicateSkuException(product.getSku()
             );
         }
 
@@ -33,7 +34,7 @@ public class ProductService {
 
     public Product getProductById(Long id){
         return productRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Product not found with ID: " + id)
+                .orElseThrow(()-> new ProductNotFoundException(id)
                 );
     }
 
@@ -46,7 +47,7 @@ public class ProductService {
         if(!existingProduct.getSku().equals(updatingProduct.getSku())
                 && productRepository.existsBySku(updatingProduct.getSku())){
 
-            throw new IllegalArgumentException("Product with this SKU already exists!");
+            throw new DuplicateSkuException(updatingProduct.getSku());
         }
 
         // Update the existing products fields
@@ -63,9 +64,7 @@ public class ProductService {
     public void deleteProduct(Long id) {
 
         if (!productRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Product not found with ID: " + id
-            );
+            throw new ProductNotFoundException(id);
         }
 
         productRepository.deleteById(id);
