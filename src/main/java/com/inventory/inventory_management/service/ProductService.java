@@ -58,4 +58,17 @@ public class ProductService {
         // Save the updated product
         return productRepository.save(existingProduct);
     }
+
+
+    public void deleteProduct(Long id) {
+
+        if (!productRepository.existsById(id)) {
+            throw new RuntimeException(
+                    "Product not found with ID: " + id
+            );
+        }
+
+        productRepository.deleteById(id);
+    }
+
 }
