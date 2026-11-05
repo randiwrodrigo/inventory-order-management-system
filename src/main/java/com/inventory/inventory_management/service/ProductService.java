@@ -37,4 +37,25 @@ public class ProductService {
                 );
     }
 
+    public Product updateProduct(Long id, Product updatingProduct){
+
+        // Find the existing product
+        Product existingProduct = getProductById(id);
+
+        // Check whether the new SKU belongs to another product
+        if(!existingProduct.getSku().equals(updatingProduct.getSku())
+                && productRepository.existsBySku(updatingProduct.getSku())){
+
+            throw new IllegalArgumentException("Product with this SKU already exists!");
+        }
+
+        // Update the existing products fields
+        existingProduct.setName(updatingProduct.getName());
+        existingProduct.setSku(updatingProduct.getSku());
+        existingProduct.setPrice(updatingProduct.getPrice());
+        existingProduct.setQuantity(updatingProduct.getQuantity());
+
+        // Save the updated product
+        return productRepository.save(existingProduct);
+    }
 }

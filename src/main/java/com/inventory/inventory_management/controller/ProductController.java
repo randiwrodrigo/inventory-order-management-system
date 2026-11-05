@@ -39,5 +39,9 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-
+    @PostMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatingProduct){
+        Product product = productService.updateProduct(id, updatingProduct);
+        return ResponseEntity.ok(product);
+    }
 }
